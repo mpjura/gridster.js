@@ -261,7 +261,7 @@
     fn.on_dragmove = function(e) {
         var offset = this.get_offset(e);
 
-        if( this.options.autoscroll ){ this.manage_scroll(offset); }
+        this.options.autoscroll && this.manage_scroll(offset);
 
         (this.helper ? this.$helper : this.$player).css({
             'position': 'absolute',

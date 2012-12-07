@@ -87,7 +87,6 @@ module.exports = function(grunt) {
         eqeqeq: true,
         immed: true,
         latedef: true,
-        loopfunc: true,
         newcap: true,
         noarg: true,
         sub: true,
@@ -97,9 +96,7 @@ module.exports = function(grunt) {
         browser: true
       },
       globals: {
-        jQuery: true,
-        throttle: true,
-        debounce: true
+        jQuery: true
       }
     },
     uglify: {},

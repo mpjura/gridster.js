@@ -82,7 +82,7 @@
 
 
     fn.for_each_cell = function(callback, gridmap) {
-        if ( !gridmap ){ gridmap = this.gridmap; }
+        gridmap || (gridmap = this.gridmap);
         var cols = gridmap.length;
         var rows = gridmap[1].length;
 
@@ -101,13 +101,12 @@
 
 
     fn.next_position_in_range = function(size_x, size_y, max_rows) {
+        size_x || (size_x = 1);
+        size_y || (size_y = 1);
         var ga = this.gridmap;
         var cols_l = ga.length;
         var valid_pos = [];
         var rows_l;
-
-        if ( !size_x ){ size_x = 1; }
-        if ( !size_y ){ size_y = 1; }
 
         for (var c = 1; c < cols_l; c++) {
             rows_l = max_rows || ga[c].length;

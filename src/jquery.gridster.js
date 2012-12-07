@@ -88,9 +88,9 @@
       this.widgets = [];
       this.$changed = $([]);
       this.wrapper_width = this.$wrapper.width();
-      this.min_widget_width = this.options.widget_margins[0] +
+      this.min_widget_width = (this.options.widget_margins[0] * 2) +
         this.options.widget_base_dimensions[0];
-      this.min_widget_height = this.options.widget_margins[1] +
+      this.min_widget_height = (this.options.widget_margins[1] * 2) +
         this.options.widget_base_dimensions[1];
       this.init();
     }
@@ -151,9 +151,8 @@
     */
     fn.add_widget = function(html, size_x, size_y, col, row) {
         var pos;
-        
-        if ( !size_x ){ size_x = 1; }
-        if ( !size_y ){ size_y = 1; }
+        size_x || (size_x = 1);
+        size_y || (size_y = 1);
 
         if (!col & !row) {
             pos = this.next_position(size_x, size_y);
@@ -199,9 +198,8 @@
     */
     fn.resize_widget = function($widget, size_x, size_y) {
         var wgd = $widget.coords().grid;
-        
-        if ( !size_x ){ size_x = wgd.size_x; }
-        if ( !size_y ){ size_y = wgd.size_y; }
+        size_x || (size_x = wgd.size_x);
+        size_y || (size_y = wgd.size_y);
 
         if (size_x > this.cols) {
             size_x = this.cols;
@@ -344,9 +342,7 @@
 
         $nexts.not($exclude).each($.proxy(function(i, w) {
             var wgd = $(w).coords().grid;
-            
-            if ( wgd.row > row + size_y - 1 ){ return; }
-            
+            if (!(wgd.row <= (row + size_y - 1))) { return; }
             var diff =  (row + size_y) - wgd.row;
             this.move_widget_down($(w), diff);
         }, this));
@@ -399,13 +395,12 @@
     *  widget coords.
     */
     fn.next_position = function(size_x, size_y) {
+        size_x || (size_x = 1);
+        size_y || (size_y = 1);
         var ga = this.gridmap;
         var cols_l = ga.length;
         var valid_pos = [];
         var rows_l;
-
-        if ( !size_x ){ size_x = 1; }
-        if ( !size_y ){ size_y = 1; }
 
         for (var c = 1; c < cols_l; c++) {
             rows_l = ga[c].length;
@@ -505,10 +500,8 @@
     *  the serialize_params option.
     */
     fn.serialize = function($widgets) {
+        $widgets || ($widgets = this.$widgets);
         var result = [];
-
-        if ( !$widgets ){ $widgets = this.$widgets; }
-
         $widgets.each($.proxy(function(i, widget) {
             result.push(this.options.serialize_params(
                 $(widget), $(widget).coords().grid ) );
@@ -1266,7 +1259,7 @@
     * @return {HTMLElement} Returns a jQuery collection of HTMLElements
     */
     fn.get_widgets_under_player = function(cells) {
-        if ( !cells ){ cells = this.cells_occupied_by_player || {cols: [], rows: []}; }
+        cells || (cells = this.cells_occupied_by_player || {cols: [], rows: []});
         var $widgets = $([]);
 
         $.each(cells.cols, $.proxy(function(i, col) {
@@ -1466,7 +1459,6 @@
 
         while (++r <= p_bottom_row ) {
             var common = true;
-
             $.each(upper_rows, function(col, rows) {
                 if ($.isArray(rows) && $.inArray(r, rows) === -1) {
                     common = false;
@@ -1672,8 +1664,7 @@
         var actual_row = el_grid_data.row;
         var moved = [];
         var can_go_up = true;
-        
-        if ( !y_units ){ y_units = 1; }
+        y_units || (y_units = 1);
 
         if (!this.can_go_up($widget)) { return false; } //break;
 
@@ -2266,19 +2257,18 @@
         var i;
         var rules;
 
-        if ( !opts ){ opts = {}; }
-        if ( !opts.cols ){ opts.cols = this.cols; }
-        if ( !opts.rows ){ opts.rows = this.rows; }
-        if ( !opts.namespace ){ opts.namespace = this.options.namespace; }
-        if ( !opts.widget_base_dimensions ){
-            opts.widget_base_dimensions = this.options.widget_base_dimensions;
-        }
-        if ( !opts.widget_margins ){
-            opts.widget_margins = this.options.widget_margins;
-        }
-        opts.min_widget_width = (opts.widget_margins[0] * 2) + opts.widget_base_dimensions[0];
-
-        opts.min_widget_height = (opts.widget_margins[1] * 2) + opts.widget_base_dimensions[1];
+        opts || (opts = {});
+        opts.cols || (opts.cols = this.cols);
+        opts.rows || (opts.rows = this.rows);
+        opts.namespace || (opts.namespace = this.options.namespace);
+        opts.widget_base_dimensions ||
+            (opts.widget_base_dimensions = this.options.widget_base_dimensions);
+        opts.widget_margins ||
+            (opts.widget_margins = this.options.widget_margins);
+        opts.min_widget_width = (opts.widget_margins[0] * 2) +
+            opts.widget_base_dimensions[0];
+        opts.min_widget_height = (opts.widget_margins[1] * 2) +
+            opts.widget_base_dimensions[1];
 
         // don't duplicate stylesheets for the same configuration
         var serialized_opts = $.param(opts);
@@ -2507,9 +2497,8 @@
             return $(this).attr('data-col');
         });
         actual_cols = Array.prototype.slice.call(actual_cols, 0);
-        
         //needed to pass tests with phantomjs
-        if ( actual_cols.length === 0 ){ actual_cols = [0]; }
+        actual_cols.length || (actual_cols = [0]);
 
         var min_cols = Math.max.apply(Math, actual_cols);
 
