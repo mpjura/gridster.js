@@ -1129,20 +1129,11 @@
     *
     * @method remove_widget
     * @param {HTMLElement} el The jQuery wrapped HTMLElement you want to remove.
-    * @param {Boolean|Function} silent If true, widgets below the removed one
-    * will not move up. If a Function is passed it will be used as callback.
-    * @param {Function} callback Function executed when the widget is removed.
     * @return {Class} Returns the instance of the Gridster Class.
     */
-    fn.remove_widget = function(el, silent, callback) {
+    fn.remove_widget = function(el, callback) {
         var $el = el instanceof jQuery ? el : $(el);
         var wgd = $el.coords().grid;
-
-        // if silent is a function assume it's a callback
-        if ($.isFunction(silent)) {
-            callback = silent;
-            silent = false;
-        }
 
         this.cells_occupied_by_placeholder = {};
         this.$widgets = this.$widgets.not($el);
@@ -1154,11 +1145,9 @@
         $el.fadeOut($.proxy(function() {
             $el.remove();
 
-            if (!silent) {
-                $nexts.each($.proxy(function(i, widget) {
-                    this.move_widget_up( $(widget), wgd.size_y );
-                }, this));
-            }
+            $nexts.each($.proxy(function(i, widget) {
+                this.move_widget_up( $(widget), wgd.size_y );
+            }, this));
 
             this.set_dom_grid_height();
 
@@ -1166,22 +1155,6 @@
                 callback.call(this, el);
             }
         }, this));
-    };
-
-
-    /**
-    * Remove all widgets from the grid.
-    *
-    * @method remove_all_widgets
-    * @param {Function} callback Function executed for each widget removed.
-    * @return {Class} Returns the instance of the Gridster Class.
-    */
-    fn.remove_all_widgets = function(callback) {
-        this.$widgets.each($.proxy(function(i, el){
-              this.remove_widget(el, true, callback);
-        }, this));
-
-        return this;
     };
 
 
