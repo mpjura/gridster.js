@@ -150,10 +150,13 @@
     *  the widget that was just created.
     */
     fn.add_widget = function(html, size_x, size_y, col, row) {
-        var pos;
+        var pos,
+            $w;
+
         size_x || (size_x = 1);
         size_y || (size_y = 1);
 
+        //if col and row weren't passed, render in the next available position
         if (!col & !row) {
             pos = this.next_position(size_x, size_y);
         }else{
@@ -165,12 +168,14 @@
             this.empty_cells(col, row, size_x, size_y);
         }
 
-        var $w = $(html).attr({
-                'data-col': pos.col,
-                'data-row': pos.row,
-                'data-sizex' : size_x,
-                'data-sizey' : size_y
-            }).addClass('gs_w').appendTo(this.$el).hide();
+        $w = ( html.jquery ) ? html : $( html );
+
+        $w.attr({
+            'data-col': pos.col,
+            'data-row': pos.row,
+            'data-sizex' : size_x,
+            'data-sizey' : size_y
+        }).addClass('gs_w').appendTo(this.$el).hide();
 
         this.$widgets = this.$widgets.add($w);
 
